@@ -12,7 +12,19 @@ export async function getReceitas(req, res) {
 export async function getReceitaById(req, res) {
     const {id} = req.params;
     try{
-        const receitaId = await db.query(`SELECT * FROM receitas WHERE id=$1;`, [id]);
+        const receitaId = await db.query(`
+        SELECT receitas.*, categorias.nome AS categoria 
+            FROM receitas
+            JOIN categorias ON receitas.id_categoria = categorias.id 
+            WHERE receitas.id=$1;`, [id]);
+        /* exemplo para melhorar a apresentação do que volta para user
+        const deixandoApresentavel = receitaId.rows[0];
+        if(deixandoApresentavel.id_categoria === 1){
+            const categoria = "amador";
+            const receita = {...deixandoApresentavel, categoria};
+            res.send(receita);
+        }*/
+
         res.send(receitaId.rows[0]); // esse [0] é para tirar ele de dentro do array, vir só objeto
     } catch (erro){
         res.send(erro.message)
