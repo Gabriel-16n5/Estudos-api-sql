@@ -1,9 +1,22 @@
+import { db } from "../database/database.connection.js";
+
 export async function getReceitas(req, res) {
-    res.send("getReceitas")
+    try{
+        const receitas = await db.query('SELECT * FROM receitas;');
+        res.send(receitas.rows);
+    } catch (erro){
+        res.send(erro.message)
+    }
 }
 
 export async function getReceitaById(req, res) {
-    res.send("getReceitaById")
+    const {id} = req.params;
+    try{
+        const receitaId = await db.query(`SELECT * FROM receitas WHERE id=$1;`, [id]);
+        res.send(receitaId.rows[0]); // esse [0] é para tirar ele de dentro do array, vir só objeto
+    } catch (erro){
+        res.send(erro.message)
+    }
 }
 
 export async function createReceita(req, res) {
